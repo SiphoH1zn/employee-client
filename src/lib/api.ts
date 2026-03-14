@@ -1,4 +1,4 @@
-const BASE_URL = 'http://employee-api-v2.azurewebsites.net';
+const BASE_URL = 'https://employee-api-v2.azurewebsites.net';
 
 export type Role = 'INTERN' | 'ENGINEER' | 'ADMIN';
 
