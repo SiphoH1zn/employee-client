@@ -27,9 +27,14 @@ export default function Home() {
 
   const fetchEmployees = async (role?: Role | '') => {
     setLoading(true);
+      try {
     const data = await api.getAll((role || undefined) as Role | undefined);
-    setEmployees(data);
+    setEmployees(Array.isArray(data) ? data : []);
+  } catch {
+    setEmployees([]);
+  } finally {
     setLoading(false);
+  }
   };
 
   useEffect(() => { fetchEmployees(roleFilter); }, [roleFilter]);
