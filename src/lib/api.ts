@@ -1,5 +1,13 @@
 const BASE_URL = 'https://employee-api-v2.azurewebsites.net';
 
+const getHeaders = () => {
+  const key = process.env.NEXT_PUBLIC_API_KEY;
+  return {
+    'Content-Type': 'application/json',
+    'x-api-key': key || '',
+  };
+};
+
 export type Role = 'INTERN' | 'ENGINEER' | 'ADMIN';
 
 export interface Employee {
@@ -14,14 +22,16 @@ export interface Employee {
 export const api = {
   getAll: async (role?: Role): Promise<Employee[]> => {
     const url = role ? `${BASE_URL}/employees?role=${role}` : `${BASE_URL}/employees`;
-    const res = await fetch(url, { cache: 'no-store' });
-    return res.json();
+    const res = await fetch(url, { cache: 'no-store', headers: getHeaders() }); // ← added headers
+    if (!res.ok) return [];
+    const data = await res.json();
+    return Array.isArray(data) ? data : [];
   },
 
   create: async (data: Omit<Employee, 'id' | 'createdAt' | 'updatedAt'>): Promise<Employee> => {
     const res = await fetch(`${BASE_URL}/employees`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify(data),
     });
     return res.json();
@@ -30,13 +40,13 @@ export const api = {
   update: async (id: string, data: Partial<Employee>): Promise<Employee> => {
     const res = await fetch(`${BASE_URL}/employees/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getHeaders(),
       body: JSON.stringify(data),
     });
     return res.json();
   },
 
   delete: async (id: string): Promise<void> => {
-    await fetch(`${BASE_URL}/employees/${id}`, { method: 'DELETE' });
+    await fetch(`${BASE_URL}/employees/${id}`, { method: 'DELETE', headers: getHeaders(), });
   },
 };
