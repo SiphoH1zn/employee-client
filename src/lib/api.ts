@@ -2,6 +2,9 @@ const BASE_URL = 'https://employee-api-v2.azurewebsites.net';
 
 const getHeaders = () => {
   const key = process.env.NEXT_PUBLIC_API_KEY;
+  if (!key) {
+    console.warn('API key is not set');
+  }
   return {
     'Content-Type': 'application/json',
     'x-api-key': key || '',
